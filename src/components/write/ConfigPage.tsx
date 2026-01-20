@@ -198,24 +198,19 @@ export function ConfigPage() {
                     toast.loading(`📸 正在处理图片 (${idx}/${totalImages}): ${file.name}...`, { id: toastId })
                     const base64 = await fileToBase64NoPrefix(file)
                     let path, filename, publicPath
-                    
-                    // 特殊处理favicon和profile.png
+
+                    // 处理favicon和profile.png，直接覆盖原文件
                     if (target === 'site.favicon') {
-                        // Favicon直接覆盖public目录下的favicon.ico
                         path = 'public/favicon.ico'
                         filename = 'favicon.ico'
                         publicPath = '/favicon.ico'
                     } else if (target === 'user.avatar') {
-                        // Avatar直接覆盖public目录下的profile.png
                         path = 'public/profile.png'
                         filename = 'profile.png'
                         publicPath = '/profile.png'
                     } else {
-                        // 其他图片仍然上传到uploads目录
-                        const ext = file.name.split('.').pop() || 'png'
-                        filename = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`
-                        path = `public/images/uploads/${filename}`
-                        publicPath = `/images/uploads/${filename}`
+                        // 不处理其他图片类型
+                        continue
                     }
 
                     // Create Blob
@@ -446,8 +441,8 @@ export function ConfigPage() {
                         {mode === 'code' ? (
                             <textarea
                                 className="h-[600px] w-full rounded-xl border border-base-300 bg-base-100 p-6 font-mono text-sm focus:border-primary focus:outline-none resize-none shadow-inner"
-                                    value={configContent}
-                                    onChange={(e) => { setConfigContent(e.target.value); setIsDirty(true) }}
+                                value={configContent}
+                                onChange={(e) => { setConfigContent(e.target.value); setIsDirty(true) }}
                                 spellCheck={false}
                             />
                         ) : (
